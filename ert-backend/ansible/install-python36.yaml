@@ -1,0 +1,34 @@
+
+
+# Ansible playbooks should be idempotent, which means that
+# running a playbook multiple times should not break things and results should be same
+#
+# below are the tasks to install python3.6 which are imported in an actual playbook
+# it also checks first if the installation already exists,
+# only installs if it doesn't exists
+
+---
+
+- name: download python3.6 source
+  raw: cd /opt && wget -q https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tgz
+  when: py3_exists_check.stdout.find('Python 3.6') != 1
+
+- name: extract source
+  raw: cd /opt && tar -xf Python-3.6.3.tgz
+
+- name: install source
+  raw: cd /opt/Python-3.6.3 && ./configure --enable-optimizations --with-openssl=/usr/local/openssl && make && make install
+
+- name: remove temp
+  raw: cd / && rm -R /opt/Python-3.6.3 /opt/Python-3.6.3.tgz
+
+- name: print python3.6 in stdout
+  raw: python3 -V
+  register: pyv
+
+- name: verify python version
+  debug:
+    msg: "{{pyv}}"
+
+- name: install python3-dev libraries
+  raw: apt-get install python3-dev python-pip python3-pip python-setuptools -y

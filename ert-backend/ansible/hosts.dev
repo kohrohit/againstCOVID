@@ -1,0 +1,5 @@
+[drf]
+drf
+
+[all:vars]
+ansible_connection=docker

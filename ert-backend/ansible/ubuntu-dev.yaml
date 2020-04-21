@@ -1,0 +1,28 @@
+
+
+# Deployment playbook to setup a ubuntu 18.04 to run ert-backend-drf
+# This playbook should run without using sudo
+# Recommended to use a virtualenv python3.7 and above
+# `pip install docker` is necessary required
+#
+# run
+#     `ansible-playbook ubuntu-dev.yaml`
+
+---
+
+# this playbook to be only ran when testing
+- name: start docker container with ubuntu:16.04
+  hosts: localhost
+  tasks:
+    - name: launch ubuntu:18.04
+      docker_container:
+        image: ubuntu:18.04
+        command: sleep 1d
+        name: drf
+        network_mode: host
+
+    - name: add hosts
+      add_host:
+        name: drf
+        groups: docker
+        ansible_connection: docker

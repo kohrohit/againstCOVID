@@ -1,0 +1,17 @@
+
+
+# These tasks copy a key file from host to remote
+# ie. for git clone in our project
+# make sure these keys are deleted using `delete-git-keys.yaml` after usage
+
+---
+- name: ensure .ssh directory exists.
+  file:
+    path: /home/ubuntu/.ssh
+    state: directory
+
+- name: copy private-key to host
+  copy:
+    src: "{{ src_git_key_path }}"
+    dest: "{{ dest_git_key_path }}"
+    mode: 0400

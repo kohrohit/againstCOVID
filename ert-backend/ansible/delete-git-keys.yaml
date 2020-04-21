@@ -1,0 +1,11 @@
+
+
+# These tasks deletes all key files of copied
+# ie. for git clone in our project
+# make sure these keys are deleted using `delete-git-keys.yaml` after usage
+
+---
+- name: delete private-key from host
+  file:
+    path: "{{ dest_git_key_path }}"
+    state: absent

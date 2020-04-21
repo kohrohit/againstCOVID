@@ -1,0 +1,119 @@
+
+
+# Deployment playbook for drf
+# Recommended to use a virtualenv python2.7 and above
+# `pip install docker` is necessary if testing deployment in a docker container)
+#
+# run
+#     `ansible-playbook -i hosts drf-playbook.yaml`
+
+---
+
+- name: Configure ubuntu and Deploy ert-drf
+  hosts: drf
+  gather_facts: False
+
+  vars:
+    src_git_key_path: /home/ubuntu/.ssh/id_rsa
+    dest_git_key_path: /home/ubuntu/.ssh/id_rsa
+    git_repo: https://github.com/kohrohit/againstCOVID.git
+    branch_name: backend
+    clone_location: /home/ubuntu/againstCOVID
+
+  tasks:
+    - name: update apt-get repo
+      raw: apt-get update --fix-missing
+
+    - name: install essentials
+      raw: apt-get install openssl libssl1.0.0 build-essential -y
+
+    # python is pre-requisite for ansible to use some actions below eg. apt
+    - name: ensure python is installed
+      raw: apt-get install python3.7 python3-apt -y
+
+    - name: install utils
+      apt:
+        pkg:
+          - tmux
+          - git
+          - lynx
+          - lsof
+          - nano
+          - htop
+          - curl
+          - wget
+          - zlib1g-dev
+        update_cache: yes
+
+    - name: install python3.7
+      apt:
+        pkg:
+          - python3.7
+          - python3-dev
+          - python-pip
+          - python3-pip
+          - python-dev
+          - python3.7-dev
+          - python-setuptools
+
+    - name: install project depedencies
+      apt:
+       pkg:
+        - libpq-dev
+        - libpango1.0-0
+        - libcairo2
+        - tzdata
+        - gdal-bin
+
+    - name: ensure home directory exists
+      file:
+        path: /home/ubuntu/
+        state: directory
+
+    - name: git clone
+      block:
+        - import_tasks: copy-git-keys.yaml
+
+        - name: remove project source if already exists
+          file:
+            path: "{{ clone_location }}"
+            state: absent
+
+        - git:
+            repo: "{{ git_repo }}"
+            version: "{{ branch_name }}"
+            dest: "{{ clone_location }}"
+            accept_hostkey: yes
+            force: yes
+            recursive: no
+            key_file: "{{ src_git_key_path }}"
+          become: no
+
+      always:
+        - import_tasks: delete-git-keys.yaml
+
+    - name: install drf requirements
+      pip:
+        executable: pip3
+        chdir: "{{ clone_location }}"
+        requirements: "requirements/development.txt"
+
+    - name: fetch env-vars for drf from ./vars/env.yaml
+      include_vars:
+        file: env.yaml
+        name: drf_env
+
+    - name: print env for drf
+      debug:
+        msg: "{{ drf_env }}"
+      tags: [ never, debug ]
+
+
+      # env variables are required to run ert-backend
+      # env vars store secrets
+      # check ./readme.md to learn how to set them
+    - name: run django
+      command: python3 manage.py runserver 0.0.0.0:8000
+      args:
+        chdir: "{{ clone_location }}/project"
+      environment: "{{ drf_env }}"

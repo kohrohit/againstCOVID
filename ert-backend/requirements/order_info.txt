@@ -1,0 +1,12 @@
+Order status flow -
+ - CONFIRMATION_PENDING
+ - DRIVER_ASSIGNED
+ - VEHICLE_DISPATCHED
+ - ORDER_DISPENSING
+ - DELIVERED
+
+Order Assignment logic -
+ - add a field sequence in PartnerOrder
+ - check ongoing orders of refueler and put sequence accordingly
+ - on change_sequence method get the order_id and operation and swap the sequence
+ - after swapping call verify_sequence method

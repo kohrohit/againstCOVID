@@ -1,0 +1,33 @@
+# request reference
+
+var form = new FormData();
+form.append("files", fileInput.files[0], "some-image.png");
+form.append("files", fileInput.files[0], "some-image.png");
+
+var settings = {
+  "url": "0.0.0.0:8000/api/web/v1/reports/generate",
+  "method": "POST",
+  "timeout": 0,
+  "processData": false,
+  "mimeType": "multipart/form-data",
+  "contentType": false,
+  "data": form
+};
+
+$.ajax(settings).done(function (response) {
+  console.log(response);
+});
+
+
+# response reference
+
+{
+    "meta": {
+        "status": 1000,
+        "is_error": false,
+        "message": ""
+    },
+    "data": {
+        "sid": "QnDO-zSMfJ2EKx5"
+    }
+}

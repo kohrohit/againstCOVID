@@ -1,0 +1,17 @@
+
+
+# this is only template file, use this to create `env.yaml`
+
+---
+SECRET_KEY: some-value
+DATABASE_HOST: some-value
+DATABASE_USER: some-value
+DATABASE_PASSWORD: some-value
+DATABASE_PORT: some-value
+DATABASE_NAME: some-value
+REDIS_HOST: some-value
+REDIS_USER: some-value
+REDIS_PASSWORD: some-value
+AWS_ACCESS_KEY_ID: some-value
+AWS_SECRET_ACCESS_KEY: some-value
+AWS_STORAGE_BUCKET_NAME: some-value

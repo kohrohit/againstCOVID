@@ -1,0 +1,43 @@
+
+
+# install postgresql on remote instance
+#
+# run:
+# ansible-playbook "yourplaybookname.yaml" -i ./hosts -e "postgresql_version=..." -e "myinstance=..."
+#
+
+- name: install postgresql on Ubuntu or Debian
+  hosts: "{{myinstance}}"
+  become: yes
+  become_method: sudo
+  gather_facts: yes
+
+  tasks:
+  - debug: msg="play_hosts={{play_hosts}}"
+  - debug: msg="ansible_distribution={{ansible_distribution}}"
+
+  - name: postgresql key
+    apt_key:
+      url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+      state: present
+    become: true
+
+  - name: create variable
+    command: bash -c "echo \"deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main\" "
+    register: repo_line
+
+  - debug:
+      msg: "{{ repo_line.stdout }}"
+
+  - name: add postgresql repo
+    apt_repository:
+      repo: "{{ repo_line.stdout }}"
+      state: present
+    become: true
+
+  - name: install postgresql
+    apt:
+      name: "postgresql-{{postgresql_version}}"
+      state: present
+      update_cache: yes
+    become: true

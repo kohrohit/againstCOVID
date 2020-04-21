@@ -1,0 +1,45 @@
+# request reference
+
+var form = new FormData();
+form.append("sid", "QnDO-zSMfJ2EKx5");
+
+var settings = {
+  "url": "0.0.0.0:8000/api/web/v1/reports/get",
+  "method": "GET",
+  "timeout": 0,
+  "processData": false,
+  "mimeType": "multipart/form-data",
+  "contentType": false,
+  "data": form
+};
+
+$.ajax(settings).done(function (response) {
+  console.log(response);
+});
+
+
+# response reference
+
+{
+    "meta": {
+        "status": 1000,
+        "is_error": false,
+        "message": ""
+    },
+    "data": {
+        "sid": "QnDO-zSMfJ2EKx5",
+        "is_prepared": false,
+        "prepared_at": null,
+        "details": "{}",
+        "files": [
+            {
+                "url": "https://aishwary-test.s3.ap-south-1.amazonaws.com/uploads/QnDO-zSMfJ2EKx5-1.png",
+                "details": "{}"
+            },
+            {
+                "url": "https://aishwary-test.s3.ap-south-1.amazonaws.com/uploads/QnDO-zSMfJ2EKx5-2.png",
+                "details": "{}"
+            }
+        ]
+    }
+}
